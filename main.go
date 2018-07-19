@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	const BlockSize = 64
 	words := []string{}
 
 	w1 := "stall\n"
@@ -29,35 +28,38 @@ func main() {
 	PrintSlice(words)
 	fmt.Println("Henlo, world!")
 
-	h1 := sha256.New()
-	h2 := sha256.New()
-	h3 := sha256.New()
-	h4 := sha256.New()
+	h1 := sha256.Sum256([]byte(words[0]))
+	h2 := sha256.Sum256([]byte(words[1]))
+	h3 := sha256.Sum256([]byte(words[2]))
+	h4 := sha256.Sum256([]byte(words[3]))
 
-	h1.Write([]byte(words[0]))
-	h2.Write([]byte(words[1]))
-	h3.Write([]byte(words[2]))
-	h4.Write([]byte(words[3]))
+	fmt.Printf("h1: %x %v", h1, words[0])
+	fmt.Printf("h2: %x %v", h2, words[1])
+	fmt.Printf("h3: %x %v", h3, words[2])
+	fmt.Printf("h4: %x %v", h4, words[3])
 
-	fmt.Printf("Sum h1: %x %v", h1.Sum(nil), words[0])
-	fmt.Printf("Sum h2: %x %v", h2.Sum(nil), words[1])
-	PrintSlice(h1)
-	node12 := h1.Sum(nil) + h2.Sum(nil)
+	stringByte := fmt.Sprintf("%x", h1[:])
+	stringByte2 := fmt.Sprintf("%x", h2[:])
+	fmt.Printf("stringnbyte: %v\n", stringByte)
 
-	b := bytes.Join(h1.Sum(nil), h2.Sum(nil))
+	var b bytes.Buffer
+	b.Write([]byte(stringByte))
+	b.Write([]byte(stringByte2))
 
-	h12 := sha256.New()
-	h34 := sha256.New()
+	fmt.Printf("buf: %v\n", b.String())
 
-	h12.Write(h1.Sum(nil).Join(h2.Sum(nil)))
+	h12 := sha256.Sum256([]byte(b.String()))
+
+	fmt.Printf("h12: %x\n", h12)
+
+	//node12 = append(node12, h2...)
 
 	//h1234 := sha256.New()
 }
 
-func CreateTree(args []string) {
+//func CreateTree(args []string) {}
 
-}
-
+// PrintSlice Print a given string slice
 func PrintSlice(s []string) {
 	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 	for _, word := range s {
