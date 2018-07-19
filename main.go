@@ -7,12 +7,7 @@ import (
 )
 
 func main() {
-	words := []string{}
-
-	w1 := "stall\n"
-	w2 := "sphere\n"
-	w3 := "carbon\n"
-	w4 := "news\n"
+	words := []string{"stall\n", "sphere\n", "carbon\n", "news\n"}
 
 	//reader := bufio.NewReader(os.Stdin)
 	/*for i := 1; i < 5; i++ {
@@ -22,41 +17,49 @@ func main() {
 		words = append(words, text)
 	}*/
 
-	words = append(words, w1, w2, w3, w4)
-
 	fmt.Println("Printing Slice:")
 	PrintSlice(words)
-	fmt.Println("Henlo, world!")
 
-	h1 := sha256.Sum256([]byte(words[0]))
-	h2 := sha256.Sum256([]byte(words[1]))
-	h3 := sha256.Sum256([]byte(words[2]))
-	h4 := sha256.Sum256([]byte(words[3]))
+	h1 := GetHash(words[0])
+	h2 := GetHash(words[1])
+	h3 := GetHash(words[2])
+	h4 := GetHash(words[3])
 
-	fmt.Printf("h1: %x %v", h1, words[0])
-	fmt.Printf("h2: %x %v", h2, words[1])
-	fmt.Printf("h3: %x %v", h3, words[2])
-	fmt.Printf("h4: %x %v", h4, words[3])
+	fmt.Printf("h1: %v %v", h1, words[0])
+	fmt.Printf("h2: %v %v", h2, words[1])
+	fmt.Printf("h3: %v %v", h3, words[2])
+	fmt.Printf("h4: %v %v", h4, words[3])
 
-	stringByte := fmt.Sprintf("%x", h1[:])
-	stringByte2 := fmt.Sprintf("%x", h2[:])
-	fmt.Printf("stringnbyte: %v\n", stringByte)
+	b := Concat(h1, h2)
+	h12 := GetHash(b.String())
 
-	var b bytes.Buffer
-	b.Write([]byte(stringByte))
-	b.Write([]byte(stringByte2))
+	b = Concat(h3, h4)
+	h34 := GetHash(b.String())
 
-	fmt.Printf("buf: %v\n", b.String())
+	fmt.Printf("h12: %v\n", h12)
+	fmt.Printf("h34: %v\n", h34)
 
-	h12 := sha256.Sum256([]byte(b.String()))
+	b = Concat(h12, h34)
+	h1234 := GetHash(b.String())
 
-	fmt.Printf("h12: %x\n", h12)
-
-	//node12 = append(node12, h2...)
-
-	//h1234 := sha256.New()
+	fmt.Printf("h1234: %v\n", h1234)
 }
 
+// GetHash takes a string and returns its sha256 hash as a string literal
+func GetHash(b string) (hash string) {
+	// Hash input b and capture/format its output as a string literal
+	hash = fmt.Sprintf("%X", sha256.Sum256([]byte(b)[:]))
+	return
+}
+
+// Concat takes two strings, concatonates them, and returns a buffer containing the result
+func Concat(x string, y string) (z bytes.Buffer) {
+	z.Write([]byte(x))
+	z.Write([]byte(y))
+	return
+}
+
+// Future function
 //func CreateTree(args []string) {}
 
 // PrintSlice Print a given string slice
